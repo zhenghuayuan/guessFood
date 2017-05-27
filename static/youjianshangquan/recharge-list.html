@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>兑换记录</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="./css/mui.min.css">
+		<style type="text/css">
+			html,body {background-color: #fff;}
+			#refreshContainer {margin-top: 28px;}
+			/*.mui-pull-top-pocket {top: 0 !important; }*/
+			.mui-scroll {position: relative; z-index: 2 !important; }
+			/**/
+			.table_title {position: fixed; width: 100%; height: 28px;top: 0; background: #fff; z-index: 9; border-bottom: 1px solid #ccc;}
+			.table_title > div {overflow: hidden;}
+			.table_title > div strong {float: left; text-align: center; font-size: 14px; height: 28px; line-height: 28px;}
+			.table_title > div strong:nth-child(1) {width: 22%; }
+			.table_title > div strong:nth-child(2) {width: 18%; }
+			.table_title > div strong:nth-child(3) {width: 30%; }
+			.table_title > div strong:nth-child(4) {width: 30%; }
+			/**/
+			.table_body {padding: 0; margin: 0;}
+			.table_body  li {border-bottom: 1px solid #ccc; overflow: hidden;}
+			.table_body  li span {float: left; height: 40px; font-size: 14px; border-left: 1px solid #ccc; line-height: 40px; text-align: center;}
+			.table_body  li span:nth-child(1) {width: 22%; border-left: 0;}
+			.table_body  li span:nth-child(2) {width: 18%;}
+			.table_body  li span:nth-child(3) {width: 30%;}
+			.table_body  li span:nth-child(4) {width: 30%; line-height: normal; vertical-align: middle; padding-top: 5px;}
+			[v-cloak] {display: none;}
+		</style>
+	</head>
+	<body>
+		<div class="table_title">
+			<div>
+				<strong>名称</strong>
+				<strong>花费</strong>
+				<strong>号码</strong>
+				<strong>日期</strong>
+			</div>
+		</div>
+		<div id="refreshContainer" class="mui-scroll-wrapper" v-cloak>
+			<div class="mui-scroll">
+				<ul class="table_body">
+					<li v-for="item in items">
+						<span>{{item.name}}</span>
+						<span>{{item.redeem_voucher}}劵</span>
+						<span>{{item.mobile}}</span>
+						<span v-html="dateFormat(item.redeem_time)"></span>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script src="./js/mui.min.js"></script>
+	<script src="./js/vue.min.js"></script>
+	<script src="./js/jQuery.v2.1.4.js"></script>
+	<script>
+		var DOMAIN = "/api";
+		var API = { 
+			// 兑换记录
+			rechargeList: DOMAIN+"/Product/get_redeem_order",
+		};
+		var vm = new Vue({
+			el: "#refreshContainer",
+			data: {
+				uid: 6002809, // 
+				page: 1, // 页数 1开始
+				items: [], // 兑换记录列表
+				total: 0, // 总条数
+			},
+			created:function(){
+				var _this =this;
+				mui.init();
+				mui.init({
+					pullRefresh: {
+						container: "#refreshContainer", //下拉刷新容器标识，querySelector能定位的css选择器均可，比如：id、.class等
+						up: {
+							height:50,//可选.默认50.触发上拉加载拖动距离
+							auto:true,//可选,默认false.自动上拉加载一次
+							contentrefresh: "正在加载...",//可选，正在加载状态时，上拉加载控件上显示的标题内容
+							contentnomore:'没有更多数据了',//可选，请求完毕若没有更多数据时显示的提醒内容；
+							callback: _this.getRechargeList //必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+					    }
+					}
+				});
+			},
+			methods: {
+				getRechargeList: function(){
+					var _this = this;
+					$.ajax({
+						url: API.rechargeList,
+						data: {
+							uid: _this.uid,
+							p: _this.page,
+						},
+						type: "get",
+						dataType: "json",
+						success: function(data){
+							data.list.forEach(function(item){
+								_this.items.push(item);
+							});
+							_this.total = data.total;
+							_this.page++;
+							var len = data.list.length; // 返回条数
+							var isMore = len<10?true:false;
+							if(mui('#refreshContainer').pullRefresh()){
+								mui('#refreshContainer').pullRefresh().endPullupToRefresh(isMore);
+							}
+						},
+						error: function(){
+							alert("error", 'none', 1500);
+						}
+					})
+				},
+				dateFormat: function(str){
+					var d = new Date(Number(str)*1000);
+					return d.format("yyyy-MM-dd") +"<br>"+d.format("hh:mm");
+				}
+			}
+			
+		});
+		/*
+		 * 时间格式化
+		 * (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
+		 * (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
+		 */
+		Date.prototype.format = function(fmt) {
+			if (!fmt) {
+				return 0;
+			}
+			var obj = {
+				"M+": this.getMonth() + 1, //月份 
+				"d+": this.getDate(), //日 
+				"h+": this.getHours(), //小时 
+				"m+": this.getMinutes(), //分 
+				"s+": this.getSeconds(), //秒 
+				"q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+				"S": this.getMilliseconds() //毫秒 
+			};
+			if (/(y+)/.test(fmt)){
+				fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			}
+			for (var i in obj){
+				if (new RegExp("(" + i + ")").test(fmt)){
+					fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (obj[i]) : (("00" + obj[i]).substr(("" + obj[i]).length)));
+				}
+			}
+			return fmt;
+		}
+
+	</script>
+</html>

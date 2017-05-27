@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>充值房卡</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="./css/mui.min.css">
+		<link rel="stylesheet" href="./css/ydui.css">
+		<style type="text/css">
+			html,body {background: #fff;}
+			.from_wrap {padding: 20px 0; font-family: "微软雅黑"; color: #2a2a2a; background-color: #fff;}
+			.from_wrap .cell {position: relative; font-size: 14px; padding: 0 8px 0 0px; margin-bottom: 10px;}
+			.from_wrap .cell > * {float: left;}
+			.from_wrap .cell label {float: left; width: 28%; height: 40px; line-height: 40px; font-size: 16px; text-align: center; }
+			.from_wrap .cell input {float: left; width: 72%; height: 40px; font-size: 16px; text-indent: 8px;}
+			.get_verify { height: 36px; line-height: 36px; font-size: 12px; margin-left: 2%; margin-top: 2px; text-align: center; background-color: #FFB400; color: #fff; border-radius: 4px;}
+			.clear_input {position: absolute; right: 5%; top: 50%; margin-top: -11px; width: 22px; height: 22px; background: url(./image/clear_input.png) no-repeat center; background-size: 100% 100%;}
+			.open_address_list {position: absolute; right: 5%; top: 50%; margin-top: -11px; width: 22px; height: 22px; background: url(./image/address_list_icon.png) no-repeat center; background-size: 100% 100%;}
+			/*列表*/
+			.recharge_type {width: 100%; padding: 30px 10px 10px; background-color: #fff; font-size: 16px; color: #2a2a2a;}
+			.recharge_wrap {background-color: #fff; padding: 12px 12px;}
+			.recharge_wrap .mui-btn-outlined {padding: 12px 25px; font-size: 18px;}
+			.recharge_wrap .mui-btn-outlined span {float: left;}
+			.recharge_wrap .mui-btn-outlined em {float: right;}
+			.recharge_wrap .mui-btn-outlined:nth-last-child(1) {margin-bottom: 0 !important;}
+			/**/
+			.mui-btn-warning {position: relative; width: 96%; padding: 10px 35px; margin: 0 auto 10px; border-color: #d8bcbc; text-align: left; background: #fff;}
+			.mui-btn-warning span {float: left; color: #c24b42;}
+			.mui-btn-warning em {float: right; color: #f4a56d;}
+			.mui-btn-warning img:nth-child(1) {position: absolute;  left: 0; top: 0; width: 30px; height: 30px;}
+			.mui-btn-warning img:nth-child(2) {position: absolute; right: 0; top: 0; width: 30px; height: 30px;}
+			.mui-btn-success {width: 80%; margin: 20px auto; background-color: #319254; border-color: #319254;}
+			.active {background-color: #007aff; color: #fff !important;}
+			.tips {position: absolute; top: 100%; left: 23%; font-size: 12px; color: #FF3B30;}
+			.mui-scroll {background: #fff !important; padding-bottom: 30px;}
+			.buy_btn {width: 80%; margin: 0 auto 30px; padding: 10px;}
+			[v-cloak] {display: none;}
+			.clearfix:after{content:"\200B";display:block;height:0;clear:both;}
+		</style>
+	</head>
+	<body>	
+			<div class="wrap" id="wrap" v-cloak>
+				<div class="from_wrap" style="padding-bottom: 0px;">
+					<div class="cell clearfix">
+						<label style="width: 20%;">用户ID:</label>
+						<input type="tel" ref="inputUserid" class="" style="width: 76%;" v-model="userid" :value="userid" @focus="inputFocus('isFocus')" @blur="inputBlur('isFocus')" placeholder="请输入需要充值的用户ID">
+						<em :class="{'clear_input': isFocus && String(userid).length>0}" @click="clearInput(userid,'inputUserid')" style="right: 8%;"></em>
+						<p class="tips" :style="{'visibility': isInClub?'hidden':''}">请在游戏大厅主界面左上角核对ID后填写</p>
+						<!-- <p class="tips">请在游戏大厅主界面左上角核对ID后填写</p> -->
+					</div>
+					<div class="recharge_type" style="padding-top: 10px;">当前房卡:{{roomcard}}</div>
+					<input type="hidden" :ids="ids">
+				</div>   
+				<div class="recharge_wrap">
+					<!-- <button v-for="(item,index) in items" @click="active = index" :class="{'active': index == active}" type="button" class="mui-btn mui-btn-primary mui-btn-block mui-btn-outlined"><span>房卡×{{item.card}}</span><em>{{parseInt(item.price)}}元</em></button> -->
+					<button v-for="(item,index) in items" @click="payConfirm(item,index)" type="button" class="mui-btn mui-btn-primary mui-btn-block mui-btn-outlined"><span>房卡×{{item.card}}</span><em>{{parseInt(item.price)}}元</em></button>
+				</div>
+			
+			</div>
+		<script src="./js/vue.min.js"></script>
+		<script src="./js/jQuery.v2.1.4.js"></script>
+		<script src="./js/ydui.js"></script>
+		<script>
+			var DOMAIN = "/api";
+			var API = { 
+				// 售卡列表
+				cardList: DOMAIN+"/Product/get_goods",
+				// 威富通支付
+				wftPay: "http://www.dachuanyx.com/dcmjpay/wbpay.php",
+				// 识别是否友间会员
+				isInClub: DOMAIN+"/Login/playerExist",
+			};
+			var vm = new Vue({
+				el: "#wrap",
+				data: {
+					ids: "111",
+					roomcard: 9999,// 房卡数量
+					userid: "", //用户输入的ID v-model
+					userInfo: {},
+					active: 0,
+					items: [],
+					isFocus: false,
+					isInClub: true, // 是否友间会员
+					needNickname: "", // 需充值用户ID
+					isOnece: true,
+				},
+				created: function(){
+					this.userid = 11; // 
+					console.log(this.useridIsTrue)
+					this.getCardList();
+				},
+				computed: {
+					useridIsTrue: function(){
+						var res = /^[0-9]{7,7}$/.test(this.userid);
+						if (!res) {
+							this.isInClub = false;
+						}
+						return res;
+					}
+				},
+				watch: {
+					useridIsTrue: function(news){
+						console.log(1)
+						var _this = this;
+						if(news){
+							$.ajax({
+								url: API.isInClub,
+								data: {uid: _this.userid},
+								type: "get",
+								dataType: "json",
+								success: function(data){
+									if(data.code){
+										_this.isInClub = true;
+										_this.needNickname = data.nickname;
+									}else{
+										_this.isInClub = false;
+										_this.needNickname = "";
+									}
+								},
+								error: function(){
+									alert("error")
+								}
+							})
+						}else{
+							_this.isInClub = false;
+						}
+					}
+				},
+				methods: {
+					inputFocus: function(isFocusBool){
+						var _this = this;
+						setTimeout(function(){
+							_this[isFocusBool] = true;
+						}, 16)
+					},
+					inputBlur: function(isFocusBool){
+						var _this = this;
+						setTimeout(function(){
+							_this[isFocusBool] = false;
+						})
+					},
+					clearInput: function(data, refName){
+						this.userid = '';
+						this.$refs[refName].focus();
+					},
+					getCardList: function(){
+						var _this = this;
+						$.ajax({
+							url: API.cardList,
+							data: "",
+							type: "get",
+							dataType: "json",
+							success: function(data){
+								_this.items = data;
+							},
+							error: function(){
+								alert("error")
+							}
+						})
+					},
+					payConfirm: function(item,index){
+						var _this = this;
+						if(!_this.isInClub) {
+							setTimeout(function(){
+								YDUI.dialog.toast("请输入正确的用户ID", "none", 1000);
+							}, 600);
+						}else{
+							if(!_this.isOnece) return;
+							_this.isOnece = false;
+							setTimeout(function(){
+				                _this.isOnece = true;
+			                }, 1000);
+							new Promise(function(resolve, reject){
+								YDUI.dialog.confirm('', "是否为<span style='color: red'>"+_this.userid+"（"+_this.needNickname+"）</span>充值房卡×"+item.card+"？", [
+					                {txt: '取消', color: false, callback: function(){}},
+					                {txt: '确定', color: true, callback: resolve}
+					            ]);
+							})
+							.then(function(){
+								$.ajax({
+									url: API.wftPay,
+									data: {userid: _this.userid, id: item.id},
+									type: "get",
+									dataType: "json",
+									success: function(res){
+										if(typeof(res) === 'string'){
+						                    res = JSON.parse(res);
+						                }
+						                if(res.status == 500){
+						                	return YDUI.dialog.toast(res.status, "none", 1000);
+						                }else{
+						                	window.location.href =  res.pay_info;
+						                	// window.location.href = "https://statecheck.swiftpass.cn/pay/wappay?token_id=27f7ab5741e17207a6bfa9fc6b12a26d0&service=pay.weixin.wappayv3"
+						                }
+									},
+									error: function(){
+										alert("error")
+									}
+								})
+							})
+							.catch(function(e){
+								alert("请求错误:"+e);
+							})
+							
+						}
+					}
+				}
+			})
+
+		</script>
+	</body>
+</html>
