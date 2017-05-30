@@ -38,17 +38,17 @@
 		},
 		created(){
 			setTimeout(()=>{
-				// this.username = this.domain;
+				this.username = this.domain;
 				console.log(this.domain)
 			}, 100)
 		},
 		methods: {
 			register(){
 				const _this = this;
-				this.axios.post('/api/register', {
-					param: {
-						username: this.username
-					}
+				this.axios.post("/api/register", {
+					username: _this.username,
+					password: _this.password
+					
 				})
 				.then((data)=>{
 					console.log(data)
