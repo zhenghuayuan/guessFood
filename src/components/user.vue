@@ -14,14 +14,14 @@
 </style>
 <script>
 	export default {
-		// data(){
-		// 	return {
+		data(){
+			return {
 				
-		// 	}
-		// },
+			}
+		},
 		created(){
 			this.guessFoodInfo()
-			if(!this.userInfo.userid){
+			if(! ('userid' in this.userInfo)){
 				this.getUserInfo()
 			}
 		},

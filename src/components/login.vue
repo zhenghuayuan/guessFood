@@ -47,7 +47,6 @@
 				.then(({data})=>{
 					if (data.code == 0) {
 						this.$store.dispatch("setUserInfo", data.body);
-						console.log(getCookie("token"))
 						// this.$router.go(0)；
 						this.$router.push({path: "/"})
 					}
