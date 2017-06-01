@@ -12,7 +12,7 @@
 	em {color: #fff;}
 	.serial {display: inline-block; color: #fff; font-size: 10px; width: 13px; height: 13px; margin-right: 0.4em; border: 1px solid #fff; text-align: center; line-height: 13px; border-radius: 50%;}
 	.orange {background-color: #ffaa11 !important;}
-	p {color: #28365e; padding-bottom: 3px; font-size: 8px;}
+	p {color: #28365e; padding-bottom: 3px; font-size: 10px;}
 	.zj {background: url(../images/food/food_zj.png) no-repeat center; background-size: 100%;}
 	.mf {background: url(../images/food/food_mf.png) no-repeat center; background-size: 100%;}
 	.gz {background: url(../images/food/food_gz.png) no-repeat center; background-size: 100%;}

@@ -5,7 +5,6 @@ import register from '../components/register'
 import home from '../components/home'
 import placeTheOrder from '../components/placeTheOrder'
 
-
 // import user from '../components/user'
 // 异步组件
 const user = resolve => require(['../components/user'], resolve)
