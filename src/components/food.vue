@@ -1,8 +1,8 @@
 <template>
-	<div :class="{'orange': true}">
+	<div :class="{'orange': active}">
 		<span :class="classname"></span>
 		<em><i class="serial">{{index}}</i>{{name}}</em>
-		<p>热度：{{hot}}</p>
+		<p v-if="hot">热度：{{hot}}</p>
 	</div>
 </template>
 <style scoped>
@@ -36,6 +36,6 @@
 </style>
 <script>
 	export default {
-		props: ['name', 'index', 'classname', 'hot', 'state']
+		props: ['name', 'index', 'classname', 'hot', 'active']
 	}
 </script>

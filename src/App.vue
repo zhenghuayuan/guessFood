@@ -1,7 +1,12 @@
 <template>
     <div id="app">
     	<transition name="slide-fade" mode="out-in">
-        	<router-view></router-view>
+            <keep-alive>
+                <router-view v-if='$route.meta.keepAlive'></router-view>
+            </keep-alive>
+        </transition>
+        <transition name="slide-fade" mode="out-in">
+            <router-view v-if='!$route.meta.keepAlive'></router-view>
         </transition>
     </div>
 </template>
@@ -13,7 +18,7 @@ export default {
 </script>
 	
 <style>
-html, body{font-size: 12px; font-family: 'helvetica';}
+html>body {font-size: 12px; font-family: 'helvetica'; background-color: #29467f;}
 .slide-fade-enter-active {
   transition: all .2s ease;
 }
@@ -28,4 +33,4 @@ html, body{font-size: 12px; font-family: 'helvetica';}
 	transform: translateX(-100%);
 	opacity: 0;
 }
-</style>
+</style> 
