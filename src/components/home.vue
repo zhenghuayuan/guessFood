@@ -33,7 +33,7 @@
 	.footer span {float: left; width: 24%; height: 34px; line-height: 34px; margin: 5px 0 0 8px; background-color: #1e6dc7; border-radius: 4px;}
 	.footer em {float: right; width: 68%; height: 34px; line-height: 34px; margin: 5px 8px 0 0; background-color: #ffaa11; border-radius: 4px;}
 
-</style>
+</style> 
 <script>
  	import food from './food';
 	export default {
