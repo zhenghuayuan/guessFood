@@ -9,7 +9,12 @@
 			<template v-for="items in orderItems">
 				<div class="order_item">
 					<food 
-						v-for='(item,index) in items' :key='index'>
+						v-for='(item,index) in items' 
+						:key='item.index'
+						:name='item.name' 
+						:classname='item.classname' 
+						:index='item.index' 
+						:active = 'item.active'>
 					</food>	
 				</div>
 			</template>
@@ -50,20 +55,18 @@
 	export default {
 		data(){
 			return {
-				orderItems: [[],[]],
+
 			}
 		},
 		created(){
-			var arr = this.foodItems.filter((item, index)=>{
-				return index < 5;
-			})
-			this.orderItems.push(arr);
-			this.orderItems.push(arr);
 
 		},
 		computed: {
 			foodItems(){
 				return this.$store.state.foodItems;
+			},
+			orderItems(){
+				return this.$store.state.orderItems;
 			}
 		},
 		components: {
