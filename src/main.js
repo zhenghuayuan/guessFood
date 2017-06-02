@@ -6,6 +6,12 @@ import YDUI from 'vue-ydui'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import store from './store/index'
+import FastClick from 'fastclick'
+// attachFastClick(document.body);
+// console.log(attachFastClick)
+document.addEventListener('DOMContentLoaded', function() {
+	FastClick.attach(document.body);
+}, false);
 Vue.use(YDUI);
 // AJAX 拦截
 axios.interceptors.request.use((config)=>{

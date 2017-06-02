@@ -35,6 +35,10 @@ const mutations = {
     },
     PUSH_ORDER(state, orderItem){
         state.orderItems.push(orderItem)
+    },
+    DEL_ORDER_ITEMS(state, index){
+        state.orderItems.splice(index, 1)
+
     }
 }
 const actions = {
@@ -43,6 +47,9 @@ const actions = {
     },
     pushOrder({commit}, orderItem){
         commit("PUSH_ORDER", orderItem)
+    },
+    delOrderItems({commit}, index){
+        commit("DEL_ORDER_ITEMS", index)
     }
 }
 // const getters = {
