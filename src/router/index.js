@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import login from '../components/login'
 import register from '../components/register'
 import home from '../components/home'
-import placeTheOrder from '../components/placeTheOrder'
+import placeTheOrder from '../components/place-the-order'
 
 // import user from '../components/user'
 // 异步组件

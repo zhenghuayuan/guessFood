@@ -34,7 +34,7 @@ const mutations = {
         state.userInfo = userInfo;
     },
     PUSH_ORDER(state, orderItem){
-        state.orderItems.push(orderItem)
+        state.orderItems.unshift(orderItem)
     },
     DEL_ORDER_ITEMS(state, index){
         state.orderItems.splice(index, 1)
