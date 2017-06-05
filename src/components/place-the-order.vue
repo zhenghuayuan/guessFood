@@ -56,27 +56,34 @@
 				<p>99888</p>
 				<b></b>
 			</span>
-			<span @click="confirmOrder">立即投入200觅钻</span>
+			<span @click="confirmOrder">立即投入{{total}}觅钻</span>
 		</div>
 	</div>
 </template>
 <script>
 import food from './food'
-import {randomNoRepeat} from '../tool'
+import {calcuZu, randomNoRepeat} from '../tool'
 
 export default {
 	data(){
 		return {
-			foodItems: []
+			foodItems: [],
+			total: 0 // 合计
 		}
 	},
 	created(){
-		this.foodItems = JSON.parse(JSON.stringify(this.$store.state.foodItems));
+		this.foodItems = JSON.parse(JSON.stringify(this.$store.state.foodItems))
+		this.countTotal()
 	},
 	computed: {
 		orderItems(){
 			return this.$store.state.orderItems
 		},
+	},
+	watch: {
+		orderItems(){
+			this.countTotal()
+		}
 	},
 	components: {
 		food
@@ -87,7 +94,7 @@ export default {
 		},
 		randActive(){
 			let arr = [];
-			randomNoRepeat(3,0,15).forEach((item)=>{
+			randomNoRepeat(3,0,15).forEach(item=>{
 				this.foodItems[item].active = true;
 				arr.push(this.foodItems[item]);
 			})
@@ -104,6 +111,17 @@ export default {
 			.catch(function(e){
 				console.log(e)
 			})
+		},
+		// 合计计算
+		countTotal(){
+			let arr = []
+			let orderItems = this.orderItems
+			if(orderItems.length == 0){
+				this.total = 0
+			}else{
+				orderItems.forEach((item)=>arr.push(calcuZu(item.length)))
+				this.total = this.$store.state.PRICE * arr.reduce((pre, next)=>pre+next)
+			}
 		}
 	},
 }

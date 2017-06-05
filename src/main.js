@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', function() {
 Vue.use(YDUI);
 // AJAX 拦截
 axios.interceptors.request.use((config)=>{
-	return config;
+	return config
 }, (error)=>{
-	return Promise.reject(error);
+	return Promise.reject(error)
 })
 axios.interceptors.response.use((response)=>{
-	return response;
+	return response
 }, (error)=>{
 	return Promise.reject(error);
 });

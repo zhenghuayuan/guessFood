@@ -4,7 +4,7 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const state = {
     domain: "http://192.168.2.108:3000",
-    userInfo: {},
+    userInfo: {}, 
     foodItems: [
         {name: "炸鸡", classname: "zj", index: 1,  hot: 9.9, active: false,},
         {name: "米饭", classname: "mf", index: 2,  hot: 9.9, active: false,},
@@ -26,7 +26,8 @@ const state = {
         {name: "牛奶", classname: "nn", index: 15,  hot: 9.9, active: false,},
         {name: "香蕉", classname: "xj", index: 16,  hot: 9.9, active: false,},
     ],
-    orderItems: []
+    orderItems: [], // 订单列表
+    PRICE: 200, // 每一组价格
 
 }
 const mutations = {
