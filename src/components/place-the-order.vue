@@ -62,7 +62,7 @@
 </template>
 <script>
 import food from './food'
-import {calcuZu, randomNoRepeat} from '../tool'
+import {calcuZu, randomNoRepeat} from '../utils'
 
 export default {
 	data(){
@@ -101,9 +101,19 @@ export default {
 			this.$store.dispatch('pushOrder', arr);
 		},
 		confirmOrder(){
+			if (this.orderItems.length == 0) return;
+			let options = []
+			for (let i = 0; i < this.orderItems.length; i++) {
+				var arr = []
+				for (let j = 0; j < this.orderItems[i].length; j++) {
+					arr.push(this.orderItems[i][j]['classname'])
+				}
+				options.push(arr);
+			}
+			console.log(JSON.stringify(options))
 			this.axios.post('/api/confirm-order', {
 				preiods: 2017052612,
-				options:JSON.stringify(this.orderItems)
+				options:JSON.stringify(options)
 			})
 			.then(function(){
 				console.log("ok")

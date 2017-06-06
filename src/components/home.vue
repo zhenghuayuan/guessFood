@@ -31,7 +31,7 @@
 <script>
 	import food from './food'
 	import homeHeader from './home-header'
-	import {calcuZu, randomNoRepeat} from '../tool'
+	import {calcuZu, randomNoRepeat} from '../utils'
 	export default {
 		name: 'home',
 		data(){
@@ -42,10 +42,13 @@
 		},
 		created(){
 			this.foodItems = JSON.parse(JSON.stringify(this.$store.state.foodItems))
+			// var wp = this.utils.getById()
+
 		},
 		computed: {
 			orderItem(){
-				return this.foodItems.filter((item)=>item.active)
+				let order = this.foodItems.filter((item)=>item.active)
+				return [...JSON.parse(JSON.stringify(order))]
 			}
 		},
 		components: {
@@ -77,6 +80,7 @@
 				if(len >= 3){
 					this.$store.dispatch('pushOrder', this.orderItem)
 					this.$router.push({path: '/placeTheOrder'})
+					this.resetFoodItems()
 				}else{
 					this.randActive()
 				}

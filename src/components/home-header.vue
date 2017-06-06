@@ -18,58 +18,75 @@
 	</div>
 </template>
 <script>
-	import {format} from '../tool'
+	import {format} from '../utils'
 	export default {
 		data(){
 			return {
 				targetOpenLottery: '00:00', // 开奖时间
 				serverCurrentTime: 0,
 				clientCurrentTime: 0,
-				countDown: '00:00:00',
-				box: null
+				countDown: '00:00',
+				calcuCountDown: null
 			}
 		},
 		created(){
-			console.log(this._data.countDown = 1)
+			this.calcuCountDown = new CalcuCountDown(this)
 			this.guessinfo()
-			this.box = new CalcuCountDown(this, 'countDown')
+			this.openlotteryResult()
 		},
 		methods: {
 			guessinfo(){
-				this.axios.get('/api/guess-info')
+				this.axios.get('/api/guessinfo')
 				.then(({data})=>{
 					if (data.code == 0) {
 						let body = data.body
 						this.targetOpenLottery = format(body.newestOpenLotteryTime, 'hh:mm')
-						this.box.start(+new Date(), body.serverCurrentTime, body.newestOpenLotteryTime, this.countDown)
+						this.calcuCountDown.start(+new Date(), body.serverCurrentTime, body.newestOpenLotteryTime, this.countDown)
 					}
 				})
+				.catch(e=>{
+					console.log(e)
+				})
+			},
+			openlotteryResult(){
+				this.axios.get('/api/openLottery-result')
+				.then(({data})=>{
+					console.log(data)
+				})	
 				.catch(e=>{
 					console.log(e)
 				})
 			}
 		}
 	}
-	function CalcuCountDown(vm, key){
+	function CalcuCountDown(component){
 		var timer = null
-		var run = function (target, mvvm, errorMs){
+		var run = function (target, errorMs){
 			return setInterval(()=>{
-				vm[key] = format(target - (+new Date()) + errorMs, 'hh:mm:ss')
-				console.log(target - (+new Date()))
+				component.countDown = format(target - (+new Date() + errorMs), 'mm:ss')
 			}, 1000)
 		}
 		var calcuError = function(client, server){
-			return client - server
+			// var wucha = 0
+			// if (client > server) {
+			// 	wucha = -(client - server)
+			// }else{
+			// 	wucha = server - client
+			// }
+			return server - client
 		}
-		return {
-			start(client, server, target, mvvm){
-				clearInterval(timer)
-				var errorMs = calcuError(client, server)
-				timer = run(target, mvvm, errorMs)
-
-			}	
+		this.start = function(client, server, target){	
+			timer && this.destroy()
+			var errorMs = calcuError(client, server)
+			timer = run(target, errorMs)
+		}
+		this.destroy = function(){
+			clearInterval(timer)
+			timer = null
 		}
 	}
+
+// console.log(res)
 // res: {
 // 	serverCurrentTime: 当前毫秒数,
 // 	newestOpenLotteryTime: 开奖时间毫秒数,

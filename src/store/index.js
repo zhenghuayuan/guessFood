@@ -28,6 +28,7 @@ const state = {
     ],
     orderItems: [], // 订单列表
     PRICE: 200, // 每一组价格
+    currentPreiods: '', // 当前期号
 
 }
 const mutations = {

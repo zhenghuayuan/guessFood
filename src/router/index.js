@@ -14,7 +14,7 @@ let router = new Router({
         {
             path: '/',
             component: home,
-            meta: {keepAlive: false}
+            meta: {keepAlive: true}
         },
         {
             path: '/placeTheOrder',
