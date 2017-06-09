@@ -31,6 +31,7 @@
 		},
 		created(){
 			this.calcuCountDown = new CalcuCountDown(this)
+			this.userinfo()
 			this.guessinfo()
 			this.openlotteryResult()
 		},
@@ -42,6 +43,18 @@
 						let body = data.body
 						this.targetOpenLottery = format(body.newestOpenLotteryTime, 'hh:mm')
 						this.calcuCountDown.start(+new Date(), body.serverCurrentTime, body.newestOpenLotteryTime, this.countDown)
+						this.$store.dispatch('setPreiods', body.currentPreiods)
+					}
+				})
+				.catch(e=>{
+					console.log(e)
+				})
+			},
+			userinfo(){
+				this.axios.get('/api/userinfo')
+				.then(({data})=>{
+					if (data.code == 0) {
+						this.$store.dispatch("setUserInfo", data.body);
 					}
 				})
 				.catch(e=>{
@@ -93,4 +106,7 @@
 // 	lotteryPool: "奖池"，
 // 	mizu: ,
 // }
+
+
+
 </script>

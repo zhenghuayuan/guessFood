@@ -41,7 +41,11 @@ const mutations = {
     DEL_ORDER_ITEMS(state, index){
         state.orderItems.splice(index, 1)
 
-    }
+    },
+    SetPreiods(state, preiods){
+        state.currentPreiods = preiods
+    },
+    
 }
 const actions = {
     setUserInfo({commit}, userInfo){
@@ -52,6 +56,10 @@ const actions = {
     },
     delOrderItems({commit}, index){
         commit("DEL_ORDER_ITEMS", index)
+    },
+    setPreiods({commit}, preiods){
+        commit("SetPreiods", preiods)
+
     }
 }
 // const getters = {

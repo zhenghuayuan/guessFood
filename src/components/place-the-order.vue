@@ -29,7 +29,7 @@
 }
 </style>
 <template>
-	<div>
+	<div> 
 		<div class="order_header">
 			<span><router-link :to="{path: '/'}">上一步</router-link></span>
 			<span><router-link :to="{path: '/'}">自选一组</router-link></span>
@@ -79,6 +79,9 @@ export default {
 		orderItems(){
 			return this.$store.state.orderItems
 		},
+		currentPreiods(){
+			return this.$store.state.currentPreiods
+		}
 	},
 	watch: {
 		orderItems(){
@@ -102,18 +105,9 @@ export default {
 		},
 		confirmOrder(){
 			if (this.orderItems.length == 0) return;
-			let options = []
-			for (let i = 0; i < this.orderItems.length; i++) {
-				var arr = []
-				for (let j = 0; j < this.orderItems[i].length; j++) {
-					arr.push(this.orderItems[i][j]['classname'])
-				}
-				options.push(arr);
-			}
-			console.log(JSON.stringify(options))
 			this.axios.post('/api/confirm-order', {
-				preiods: 2017052612,
-				options:JSON.stringify(options)
+				preiods: this.currentPreiods,
+				options: this.optionsFormat(this.orderItems)
 			})
 			.then(function(){
 				console.log("ok")
@@ -122,15 +116,27 @@ export default {
 				console.log(e)
 			})
 		},
+		// 数据格式化 => [['','',''],['','','']]
+		optionsFormat(orderItems){
+			let options = []
+			for (let i = 0; i < this.orderItems.length; i++) {
+				let arr = []
+				for (let j = 0; j < this.orderItems[i].length; j++) {
+					arr.push(this.orderItems[i][j]['classname'])
+				}
+				options.push(arr)
+			}
+			return JSON.stringify(options)
+		},
 		// 合计计算
 		countTotal(){
-			let arr = []
+			let zu = 0
 			let orderItems = this.orderItems
 			if(orderItems.length == 0){
 				this.total = 0
 			}else{
-				orderItems.forEach((item)=>arr.push(calcuZu(item.length)))
-				this.total = this.$store.state.PRICE * arr.reduce((pre, next)=>pre+next)
+				orderItems.forEach(item=>zu+=calcuZu(item.length))
+				this.total = this.$store.state.PRICE * zu
 			}
 		}
 	},
