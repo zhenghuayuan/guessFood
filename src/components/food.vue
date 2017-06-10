@@ -9,7 +9,7 @@
 	div {float: left; width: 23%; margin: 0 0 5px 1.6%; font-size: 12px; border-radius: 4px; background-color: #1E6DC7; text-align: center;}
 	div > * {display: block;}
 	span {width: 54px; height: 43px; margin: 0 auto;}
-	em {color: #fff;}
+	em {color: #fff; margin-bottom: 2px;}
 	.serial {display: inline-block; color: #fff; font-size: 10px; width: 14px; text-indent: -1px; height: 14px; margin-right: 0.4em; border: 1px solid #fff; text-align: center; line-height: 11px; border-radius: 50%;}
 	.orange {background-color: #ffaa11 !important;}
 	p {color: #28365e; padding-bottom: 3px; font-size: 10px;}

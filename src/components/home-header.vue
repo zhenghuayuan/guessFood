@@ -12,13 +12,13 @@
 		</div>
 		<div class='home_header_info'>
 			<span>开奖：{{targetOpenLottery}} 倒计时：{{countDown}} </span>
-			<em class='jump_record_btn'>竞猜记录</em>
-			<em class='jump_history_btn'>历史开奖</em>
+			<em class='jump_record_btn'><router-link :to="{'path': 'myLotteryRecord', query: {plan: '' }}">竞猜记录</router-link></em>
+			<em class='jump_history_btn'><router-link :to="{'path': 'historyLottory', query: {plan: '' }}">历史开奖</router-link></em>
 		</div>
 	</div>
 </template>
 <script>
-	import {format} from '../utils'
+	import {format} from '../util'
 	export default {
 		data(){
 			return {

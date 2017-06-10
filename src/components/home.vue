@@ -31,7 +31,7 @@
 <script>
 	import food from './food'
 	import homeHeader from './home-header'
-	import {calcuZu, randomNoRepeat} from '../utils'
+	import {calcuZu, randomNoRepeat} from '../util'
 	export default {
 		name: 'home',
 		data(){

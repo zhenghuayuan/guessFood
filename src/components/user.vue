@@ -1,58 +1,23 @@
 <template>
-	<div>
-		<div>用户名：{{userInfo.username}}</div>
-		<div>觅钻：{{userInfo.mizu}}</div>
-		<div>性别：{{userInfo.sex}}</div>
-		<div>年龄：{{userInfo.age}}</div>
-		<div>邮箱：{{userInfo.email}}</div>
+	<div class="userinfo">
+		<div class="userpic"><img :src='userpic'></div>
+		<div class="name tx_ov">{{name}}</div>
+		<div class="sex_age" :class='sex=="1"?"boy":"girl"' >{{age}}</div>
 	</div>
 </template>
 <style scoped>
-	html,body {
-		background: #fff;
-	}
+	.tx_ov{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+	.userinfo {position: relative; float: left; width: 31%; height: 40px; margin-right: 2%;}
+	.userinfo .userpic {position: absolute; width: 35px; height: 35px; border-radius: 50%; overflow: hidden;} 
+	.userinfo .userpic img {width: 100%; height: 100%;}
+	.userinfo .name {margin-left: 40px; color: #fff; font-size: 12px;}
+	.userinfo .sex_age {margin-left: 40px; margin-top: 4px; width: 34px; border-radius: 2px; text-indent: 16px;}
+	.boy {background: #66b7e6 url(../images/sex_boy.png) no-repeat 3px center; color: #fff; background-size: 12px;}
+	.girl {background: #ec5849 url(../images/sex_girl.png) no-repeat 3px center; color: #fff; background-size: 12px;}
+
 </style>
 <script>
 	export default {
-		data(){
-			return {
-				
-			}
-		},
-		created(){
-			this.guessFoodInfo()
-			if(! ('userid' in this.userInfo)){
-				this.getUserInfo()
-			}
-		},
-		computed: {
-			userInfo(){
-				return this.$store.state.userInfo;
-			}
-		},
-		methods: {
-			guessFoodInfo(){
-				this.axios.get("/api/guessFoodInfo")
-				.then(({data})=>{
-					if (data.code == 0) {
-						console.log("ok")
-					}
-				})
-				.catch((e)=>{
-					console.log(e)
-				})
-			},
-			getUserInfo(){
-				this.axios.get("/api/userInfo")
-				.then(({data})=>{
-					if (data.code == 0) {
-						this.$store.dispatch("setUserInfo", data.body)
-					}
-				})
-				.catch((e)=>{
-					console.log(e)
-				})
-			}
-		}
+		props: ['name', 'age', 'sex', 'userpic']
 	}
 </script>

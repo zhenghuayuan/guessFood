@@ -62,7 +62,7 @@
 </template>
 <script>
 import food from './food'
-import {calcuZu, randomNoRepeat} from '../utils'
+import {calcuZu, randomNoRepeat} from '../util'
 
 export default {
 	data(){

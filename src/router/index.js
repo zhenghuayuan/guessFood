@@ -4,11 +4,15 @@ import login from '../components/login'
 import register from '../components/register'
 import home from '../components/home'
 import placeTheOrder from '../components/place-the-order'
+import historyLottory from '../components/history-lottory'
+import myLotteryRecord from '../components/my-lottery-record'
+
+
 import store from '../store/index'
 
-// import user from '../components/user'
+// import userinfo from '../components/userinfo'
 // 异步组件
-const user = resolve => require(['../components/user'], resolve)
+const userinfo = resolve => require(['../components/userinfo'], resolve)
 Vue.use(Router)
 let router = new Router({
     routes: [
@@ -22,8 +26,8 @@ let router = new Router({
             component: placeTheOrder
         },
         {
-            path: '/user',
-            component: user
+            path: '/userinfo',
+            component: userinfo
         },
         {
             path: '/login',
@@ -32,6 +36,14 @@ let router = new Router({
         {
             path: '/register',
             component: register
+        },
+        {
+            path: '/historyLottory',
+            component: historyLottory
+        },
+        {
+            path: '/myLotteryRecord',
+            component: myLotteryRecord
         }
     ]
 });
@@ -39,7 +51,9 @@ let router = new Router({
 router.beforeEach((to, from, next)=>{
     let userid = store.state.userInfo.userid
     console.log(userid)
-    if (to.path != '/') {
+    if (to.path != '/' &&
+        to.path != '/historyLottory' &&
+        to.path != '/myLotteryRecord') {
         if (typeof userid == 'undefined') {
             // router.push({path: "/"})
             next({path: '/' })
