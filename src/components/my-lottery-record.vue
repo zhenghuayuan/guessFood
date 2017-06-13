@@ -1,15 +1,15 @@
 <template>
 	<div class='wrap'>
-		<record-detail v-if='isShowDetail' @closeRecordDetial='isShowDetail = false'></record-detail>	
+		<record-detail v-if='isShowDetail' :curRecords = 'curRecords' @closeRecordDetial='isShowDetail = false'></record-detail>	
 		<template v-else>
 			<ul class='record_wrap'>
-				<li v-for='item in records' @click='isShowDetail = true' class='record_li'>
+				<li v-for='item in records' @click='isShowDetail = true && (curRecords = item)' class='record_li'>
 					<div class='record_li_top'>
-						<span>{{orderTime(item.createTime).slice(0, 10)}}</span>
-						<em class='orange'>等待开奖</em>
+						<span>{{format(item.createTime, 'yyyy-MM-dd hh:mm')}}</span>
+						<em class='orange' :class='lotteryClass(item.status)'>{{lotteryStatus(item.status)}}</em>
 					</div>
 					<div class='record_li_bottom'>
-						<span>{{orderTime(item.createTime).slice(-5)}}</span>
+						<span>{{format(item.createTime, 'hh:mm')}}</span>
 						<em>支付{{item.betMizu}}觅钻</em>
 					</div>
 				</li>
@@ -33,17 +33,39 @@
 	.footer_btn span{display: block; width: 218px; height: 34px; margin: 5px auto 0; background-color: #ffaa11; color: #fff; text-align: center; line-height: 34px; font-size: 14px; border-radius: 5px;}
 	.orange {color: #ffae1d;}
 	.green {color: #86c9af;}
+	.gray {color: #ccc;}
 
 </style>
 <script>
 	import recordDetail from './record-detail'
 	import {format} from '../util'
+
+	function ScrollLoad({pubContainer, subContainer, down}){
+		down()
+		function delay(){
+			let timer = null
+			let pubHeight = pubContainer.clientHeight
+			return function(){
+				if (timer) return
+				timer = setTimeout(()=>{
+					timer = null
+				}, 300)
+				if (pubContainer.scrollTop >= (subContainer.clientHeight - pubContainer.clientHeight) - 20) {
+					down()
+				}
+
+			}
+		}
+		pubContainer.onscroll = delay()
+	}
 	export default {
 		data(){
 			return {
 				isShowDetail: false,
 				foodItems: [],
 				records: [], 
+				curRecords: {},
+				hasMore: true, 
 				limit: {
 					page: 0,
 					size: 10
@@ -52,36 +74,69 @@
 		},
 		created(){
 			this.foodItems = JSON.parse(JSON.stringify(this.$store.state.foodItems))
-			this.lotteryRecord()
+			// this.lotteryRecord()
 		},
-		computed: {
-
-			
+		mounted(){
+			var _this = this;
+			new ScrollLoad({
+				pubContainer: document.body,
+				subContainer: document.querySelector('.record_wrap'),
+				down(){
+					if (!_this.hasMore) return
+					_this.hasMore = false
+					_this.axios('/api/lotteryRecord', {
+						params: {
+							page: _this.limit.page,
+							size: _this.limit.size
+						}
+					})
+					.then(({data})=>{
+						if (data.code == 0) {
+							_this.records = _this.records.concat(data.body)
+							_this.limit.page ++
+							if (data.body.length > 0) {
+								_this.hasMore = true
+							}
+						}
+					})
+					.catch(e=>{
+						console.log(e)
+					})
+				}
+			})
 		},
 		components: {
 			recordDetail
 		},
 		methods: {
-			orderTime(createTime){
-				return format(createTime, 'yyyy-MM-dd hh:mm')
+			format,
+			lotteryStatus(status){
+				switch(status){
+					case 1:
+					return '等待开奖'
+					case 2:
+					return '未猜中'
+					case 3:
+					return '猜中啦'
+				}
 			},
+			lotteryClass(status){
+				switch(status){
+					case 1:
+					return 'green'
+					case 2:
+					return 'gray'
+					case 3:
+					return 'orange'
+				}
+			},
+			// orderTime(createTime){
+			// 	return format(createTime, 'yyyy-MM-dd hh:mm')
+			// },
 			lotteryRecord(){
-				this.axios('/api/lotteryRecord', {
-					params: {
-						page: this.limit.page,
-						size: this.limit.size
-					}
-				})
-				.then(({data})=>{
-					if (data.code == 0) {
-						this.records = this.records.concat(data.body)
-						this.limit.page ++
-					}
-				})
-				.catch(e=>{
-					console.log(e)
-				})
-			}
+			
+			},
+			
 		}
 	}
 	

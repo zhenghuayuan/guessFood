@@ -13,7 +13,7 @@
 		<div class='home_header_info'>
 			<span>开奖：{{targetOpenLottery}} 倒计时：{{countDown}} </span>
 			<em class='jump_record_btn'><router-link :to="{'path': 'myLotteryRecord', query: {plan: '' }}">竞猜记录</router-link></em>
-			<em class='jump_history_btn'><router-link :to="{'path': 'historyLottory', query: {plan: '' }}">历史开奖</router-link></em>
+			<em class='jump_history_btn'><router-link :to="{'path': 'historyLottery', query: {plan: '' }}">历史开奖</router-link></em>
 		</div>
 	</div>
 </template>
@@ -47,7 +47,7 @@
 					}
 				})
 				.catch(e=>{
-					console.log(e)
+					console.log(`错误:${e}`)
 				})
 			},
 			userinfo(){
@@ -62,7 +62,7 @@
 				})
 			},
 			openlotteryResult(){
-				this.axios.get('/api/openLottery-result')
+				this.axios.get('/api/openlotteryResult')
 				.then(({data})=>{
 					console.log(data)
 				})	

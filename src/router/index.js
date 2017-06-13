@@ -4,7 +4,7 @@ import login from '../components/login'
 import register from '../components/register'
 import home from '../components/home'
 import placeTheOrder from '../components/place-the-order'
-import historyLottory from '../components/history-lottory'
+import historyLottery from '../components/history-lottery'
 import myLotteryRecord from '../components/my-lottery-record'
 
 
@@ -38,8 +38,8 @@ let router = new Router({
             component: register
         },
         {
-            path: '/historyLottory',
-            component: historyLottory
+            path: '/historyLottery',
+            component: historyLottery
         },
         {
             path: '/myLotteryRecord',
@@ -50,9 +50,9 @@ let router = new Router({
 // 路由拦截
 router.beforeEach((to, from, next)=>{
     let userid = store.state.userInfo.userid
-    console.log(userid)
+    console.log(`userid:${userid}`)
     if (to.path != '/' &&
-        to.path != '/historyLottory' &&
+        to.path != '/historyLottery' &&
         to.path != '/myLotteryRecord') {
         if (typeof userid == 'undefined') {
             // router.push({path: "/"})

@@ -1,6 +1,6 @@
 export function calcuZu(n){
 		/***
-		* 计算任三公式
+		* 计算组合数
 		*/
 		// @param 选择的个数
 		n = (n-2)*(n-1)*n/6;
@@ -28,6 +28,17 @@ export function rand(start, end){
 	// 判断end是否大于start
 	if (start > end) {var i = 0;i = start;start = end;end = i;}
 	return Math.floor(Math.random()*(end-start+1))+start
+}
+export function mapFood(foodItems, options){
+	options = JSON.parse(options || '[]')
+	var res = foodItems.filter(item=>{
+		var is = false
+		options.forEach(opt=>{
+			if(opt == item.classname) is = true 
+		})
+		return is 
+	})
+	return JSON.parse(JSON.stringify(res))
 }
 
 export function format(ms, fmt) {

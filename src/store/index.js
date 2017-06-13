@@ -40,7 +40,6 @@ const mutations = {
     },
     DEL_ORDER_ITEMS(state, index){
         state.orderItems.splice(index, 1)
-
     },
     SetPreiods(state, preiods){
         state.currentPreiods = preiods

@@ -15,7 +15,6 @@
 .mizu_wrap i {width: 20px; height: 20px; background: url(http://pub.froup.net/hoomic/H5/game/pubData/images/mizu_icon.png) no-repeat center; background-size: 100%;}
 .mizu_wrap b {width: 18px; height: 18px; background: url(http://pub.froup.net/hoomic/H5/game/pubData/images/adventure_add_mizu.png) no-repeat center; background-size: 100%;}
 .mizu_wrap p {min-width: 3em; text-align: left;}
-
 .list-item {
   display: inline-block;
   margin-right: 10px;
@@ -30,14 +29,14 @@
 </style>
 <template>
 	<div> 
-		<div class="order_header">
-			<span><router-link :to="{path: '/'}">上一步</router-link></span>
-			<span><router-link :to="{path: '/'}">自选一组</router-link></span>
-			<span @click="randActive">随机一组</span>
+		<div class='order_header'>
+			<span><router-link :to='{path: "/"}'>上一步</router-link></span>
+			<span><router-link :to='{path: "/"}'>自选一组</router-link></span>
+			<span @click='randActive'>随机一组</span>
 		</div>
-		<transition-group class="content" name="list" tag="div" mode="out-in">
-			<template v-for="(items, indexs) in orderItems" >
-				<div class="order_item" :key="items">
+		<transition-group class='content' name='list' tag='div' mode='out-in'>
+			<template v-for='(items, indexs) in orderItems' >
+				<div class='order_item' :key='items'>
 					<food 
 						v-for='(item,index) in items' 
 						:key='item.index'
@@ -46,17 +45,17 @@
 						:index='item.index' 
 						:active = 'item.active'>
 					</food>	
-					<span @click="delOrderItems(items, indexs)">×</span>
+					<span @click='delOrderItems(items, indexs)'>×</span>
 				</div>
 			</template>
 		</transition-group>
-		<div class="footer">
+		<div class='footer'>
 			<span class='mizu_wrap'>
 				<i></i>
-				<p>99888</p>
+				<p>{{userinfo.mizu}}</p>
 				<b></b>
 			</span>
-			<span @click="confirmOrder">立即投入{{total}}觅钻</span>
+			<span @click='confirmOrder'>立即投入{{total}}觅钻</span>
 		</div>
 	</div>
 </template>
@@ -81,6 +80,9 @@ export default {
 		},
 		currentPreiods(){
 			return this.$store.state.currentPreiods
+		},
+		userinfo(){
+			return this.$store.state.userInfo
 		}
 	},
 	watch: {
@@ -105,12 +107,13 @@ export default {
 		},
 		confirmOrder(){
 			if (this.orderItems.length == 0) return;
-			this.axios.post('/api/confirm-order', {
+			this.axios.post('/api/confirmOrder', {
 				preiods: this.currentPreiods,
 				options: this.optionsFormat(this.orderItems)
 			})
-			.then(function(){
-				console.log("ok")
+			.then((data)=>{
+				this.$store.state.orderItems = []
+				this.$dialog.toast({mes: '下单成功', timeout: 2000})
 			})
 			.catch(function(e){
 				console.log(e)

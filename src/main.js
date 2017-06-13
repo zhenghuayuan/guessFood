@@ -20,6 +20,11 @@ axios.interceptors.request.use((config)=>{
 	return Promise.reject(error)
 })
 axios.interceptors.response.use((response)=>{
+	var code = response['data']['code']
+	if(code == 101 || code == 102){
+		vm.$router.replace({path: "/login"})
+		// return; 
+	}
 	return response
 }, (error)=>{
 	return Promise.reject(error);
@@ -31,7 +36,7 @@ Vue.prototype.utils = {
 		alert(1)
 	}
 }
-new Vue({
+var vm = new Vue({
 	el: '#app',
 	router,
 	store,

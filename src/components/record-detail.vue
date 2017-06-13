@@ -1,41 +1,51 @@
 <template>
 	<div class="">
 		<div class="record_result_wrap ">
-			<div class="record_result_bgc"></div>  <!-- record_wait_bgc  record_fail_bgc -->
+			<div :class='lotteryLogo(curRecords.status)'></div>  <!-- record_wait_bgc  record_fail_bgc -->
 			<div class="record_result_data">
-				<div class="record_result_time">2016-06-29</div>
+				<div class="record_result_time">{{format(curRecords.createTime, 'yyyy-MM-dd hh:mm')}}</div>
 				<ul class="record_result_ul">
-					<li>
+					<li v-if='curRecords.lotteryOptions'>
 						<div class="m_l5" style="position: absolute;">开奖结果：</div>
 						<ul class="food_wrap">
-							<food></food>
-							<food></food>
-							<food></food>
+							<food 
+								v-for='(item, index) in lotteryFood(curRecords.lotteryOptions)' 
+								:key='item.index'
+								:name='item.name' 
+								:classname='item.classname' 
+								:index='item.index' 
+								:active = 'true'>
+							</food>	
 						</ul>
 					</li>
 					<li>
 						<div class="m_l5">竞猜觅钻：</div>
-						<div>300觅钻</div>
+						<div>{{curRecords.betMizu}}觅钻</div>
 					</li>
 					<li>
 						<div class="m_l5">竞猜信息：</div>
-						<div>共1组，投3倍</div>
+						<div>共{{curRecords.betGrounp}}组，投1倍</div>
 					</li>
 					<li>
 						<div class="m_l5">竞猜时间：</div>
-						<div>2016-11-12 07:54</div>
+						<div>{{format(curRecords.createTime, 'yyyy-MM-dd hh:mm')}}</div>
 					</li>
 					<li>
 						<div class="m_l5" style="position: absolute;">竞猜食物：</div>
 						<ul class="food_wrap">
-							<food></food>
-							<food></food>
-							<food></food>
+							<food 
+								v-for='(item, index) in lotteryFood(curRecords.betOptions)' 
+								:key='item.index'
+								:name='item.name' 
+								:classname='item.classname' 
+								:index='item.index' 
+								:active ='mapHit(item.classname)'>
+							</food>	
 						</ul>
 					</li>
 					<li>
 						<div class="m_l5">获得觅钻：</div>
-						<div>15626觅钻</div>
+						<div>{{curRecords.betMizu}}觅钻</div>
 					</li>
 				</ul>
 			</div>
@@ -62,23 +72,49 @@
 	
 	.food_wrap {margin-left: 60px; width: 80%;}
 
-
-	.footer_btn {position: fixed; bottom: 0; width: 100%; word-spacing: 10px;  height: 45px; font-weight: bold; background-color: #28365e; border-top: 1px solid #4c7fb5;  text-align: center;}
-	.footer_btn span {display: inline-block; margin-top: 5px; width: 144px; height: 34px; color: #fff; background-color: #ffaa11;line-height: 34px; font-size: 14px; border-radius: 5px;}
+	.footer_btn {position: fixed; bottom: 0; width: 100%; word-spacing: 10px; height: 45px; font-weight: bold; background-color: #28365e; border-top: 1px solid #4c7fb5;  text-align: center;}
+	.footer_btn span {display: inline-block; margin-top: 5px; width: 144px; height: 34px; color: #fff; background-color: #ffaa11; line-height: 34px; font-size: 14px; border-radius: 5px;}
 
 </style>
 <script>
 	import food from './food'
-	
+	import {format, mapFood} from '../util'
+
 	export default {
 		data(){
 			return {
-				
 			}
 		},
+		props: ['curRecords'],
+		computed: {
+			foodItems(){
+				return this.$store.state.foodItems
+			}
+		},
+		created(){
+
+		},
 		methods: {
+			format,
 			closeRecordDetial(){
 				this.$emit('closeRecordDetial')
+			},
+			lotteryFood(options){
+				return mapFood(this.foodItems, options)
+			},
+			mapHit(food){
+				var lotteryOptions = JSON.parse(this.curRecords.lotteryOptions || '[]')
+				return lotteryOptions.some(item =>item == food)
+			},
+			lotteryLogo(status){
+				switch(status){
+					case 1:
+					return 'record_wait_bgc'
+					case 2:
+					return 'record_fail_bgc'
+					case 3:
+					return 'record_result_bgc'
+				}
 			}
 		},
 		components: {
