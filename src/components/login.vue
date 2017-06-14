@@ -27,11 +27,6 @@
                 password: ''
 			}
 		},
-		// computed:{
-		// 	domain(){
-		// 		return this.$store.getters.domain;
-		// 	}
-		// },
 		created(){
 			// this.$router.push({path: "/"})
 		},

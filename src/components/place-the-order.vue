@@ -106,7 +106,10 @@ export default {
 			this.$store.dispatch('pushOrder', arr);
 		},
 		confirmOrder(){
-			if (this.orderItems.length == 0) return;
+			if (this.orderItems.length == 0) return
+			if (this.userinfo.mizu < this.total) {
+				return this.$dialog.toast({mes: '觅钻余额不足'})
+			}
 			this.axios.post('/api/confirmOrder', {
 				preiods: this.currentPreiods,
 				options: this.optionsFormat(this.orderItems)

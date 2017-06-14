@@ -47,11 +47,15 @@
 				const _this = this;
 				this.axios.post("/api/register", {
 					username: _this.username,
-					password: _this.password
-					
+					password: _this.password,
+					email: _this.email
 				})
-				.then((data)=>{
-					console.log(data)
+				.then(({data})=>{
+					if (data.code == 0) {
+						this.$router.replace({path: "/login"})
+					}else{
+						this.$dialog.toast({mes: data.msg});
+					}
 				})
 				.catch((e)=>{
 					console.log(e)
