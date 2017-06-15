@@ -1,6 +1,7 @@
 <style>
 	.home_header {position: relative; width: 100%; height: 25vw; background: url(../images/supper_logo_bgc.png) no-repeat center; background-size: 100% 100%;}
-	.home_header span {position: absolute; width: 25%; right: 25%; bottom: 21%; text-align: center; font-size: 14px; color: #fff; font-weight: bold;}
+	.home_header .jump_userinfo {position: absolute; right: 10px; top: 1px; width: 20px; height: 20px; background: url(../images/user_icon.png) no-repeat center; background-size: 100% 100%;}
+	.home_header .lottery_pool {position: absolute; width: 25%; right: 25%; bottom: 21%; text-align: center; font-size: 14px; color: #fff; font-weight: bold;}
 	.home_header_info {height: 30px; line-height: 30px; overflow: hidden; color: #fff; background-color: #28365E;}
 	.home_header_info span {padding-left: 1em;}
 	.jump_record_btn, .jump_history_btn {float: right; margin: 5px 10px 0 0; line-height: normal; padding: 2px; background-color: #FFAA11; border-radius: 4px; font-weight: bold;}
@@ -8,7 +9,8 @@
 <template>
 	<div>
 		<div class='home_header'>
-			<span>985246</span>
+			<em class='jump_userinfo' @click='jumpUserinfo'></em>
+			<span class='lottery_pool'>985246</span>
 		</div>
 		<div class='home_header_info'>
 			<span>开奖：{{targetOpenLottery}} 倒计时：{{countDown}} </span>
@@ -26,79 +28,89 @@
 				serverCurrentTime: 0,
 				clientCurrentTime: 0,
 				countDown: '00:00',
-				calcuCountDown: null
+				loopOpenlottery: true
 			}
 		},
 		created(){
-			this.calcuCountDown = new CalcuCountDown(this)
-			this.userinfo()
 			this.guessinfo()
 			this.openlotteryResult()
+		},
+		computed: {
+			userinfo(){
+				return this.$store.state.userInfo
+			},
+			currentPreiods(){
+				return this.$store.state.currentPreiods
+			}
 		},
 		methods: {
 			guessinfo(){
 				this.axios.get('/api/guessinfo')
 				.then(({data})=>{
-					if (data.code == 0) {
-						let body = data.body
-						this.targetOpenLottery = format(body.newestOpenLotteryTime, 'hh:mm')
-						this.calcuCountDown.start(+new Date(), body.serverCurrentTime, body.newestOpenLotteryTime, this.countDown)
-						this.$store.dispatch('setPreiods', body.currentPreiods)
-					}
-				})
-				.catch(e=>{
-					console.log(`错误:${e}`)
-				})
-			},
-			userinfo(){
-				this.axios.get('/api/userinfo')
-				.then(({data})=>{
-					if (data.code == 0) {
-						this.$store.dispatch("setUserInfo", data.body);
-					}
+					let _this = this
+					let body = data.body
+					this.targetOpenLottery = format(body.newestOpenLotteryTime, 'hh:mm')
+					SingleCalcuCountDown().start({
+						client: +new Date(), 
+						server: body.serverCurrentTime, 
+						target: body.newestOpenLotteryTime,
+						callback: _this.listenerGame
+					})
+					this.$store.dispatch('setPreiods', body.currentPreiods)
 				})
 				.catch(e=>{
 					console.log(e)
 				})
 			},
+			listenerGame(serverNowMs, countDownMs){
+				// 服务器当前时间：serverNowMs 倒计时剩余时间：countDownMs
+				this.countDown = format(countDownMs, 'mm:ss')
+				let remainMiao = Math.floor(countDownMs/1000)
+				if (remainMiao <= 30) {
+					this.loopOpenlottery && this.openlotteryResult()
+				}
+			},
 			openlotteryResult(){
-				this.axios.get('/api/openlotteryResult')
+				this.loopOpenlottery = false
+				this.axios.get('/api/openlotteryResult', {
+					params: {
+						preiods: this.currentPreiods
+					}
+				})
 				.then(({data})=>{
-					console.log(data)
+					console.log('开奖:'+JSON.stringify(data))
 				})	
 				.catch(e=>{
 					console.log(e)
 				})
+			},
+			jumpUserinfo(){
+				this.$router.push({path: 'userinfo'})
 			}
 		}
 	}
-	function CalcuCountDown(component){
-		var timer = null
-		var run = function (target, errorMs){
-			return setInterval(()=>{
-				component.countDown = format(target - (+new Date() + errorMs), 'mm:ss')
-			}, 1000)
+	
+	var SingleCalcuCountDown = function(){
+		let box = null
+		function CalcuCountDown(){
+			let timer = null
+			function run(client, server, target, callback){
+				return setInterval(()=>{
+					let serverNowMs = +new Date() + (server - client)
+					let countDownMs = target - serverNowMs
+					callback(serverNowMs, countDownMs)
+				}, 1000)
+			}
+			this.start = function({client, server, target, callback}){
+				timer && clearInterval(timer)
+				timer = run(client, server, target, callback)
+			}
 		}
-		var calcuError = function(client, server){
-			// var wucha = 0
-			// if (client > server) {
-			// 	wucha = -(client - server)
-			// }else{
-			// 	wucha = server - client
-			// }
-			return server - client
+		return function(){
+			return box || (box = new CalcuCountDown())
 		}
-		this.start = function(client, server, target){	
-			timer && this.destroy()
-			var errorMs = calcuError(client, server)
-			timer = run(target, errorMs)
-		}
-		this.destroy = function(){
-			clearInterval(timer)
-			timer = null
-		}
-	}
-
+	}()
+	
 // console.log(res)
 // res: {
 // 	serverCurrentTime: 当前毫秒数,

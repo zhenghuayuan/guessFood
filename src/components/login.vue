@@ -15,9 +15,7 @@
     </div>
 </template>
 <style scoped>
-	html {
-		visibility: hidden;
-	}
+
 </style>
 <script>
 	export default {
@@ -40,11 +38,9 @@
 					password: this.password
 				})
 				.then(({data})=>{
-					if (data.code == 0) {
-						this.$store.dispatch("setUserInfo", data.body);
-						// this.$router.go(0)；
-						this.$router.push({path: "/"})
-					}
+					// this.$store.dispatch("setUserinfo", data.body);
+					// this.$router.go(0)；
+					this.$router.push({path: "/"})
 				})
 				.catch((e)=>{
 					console.log(e)

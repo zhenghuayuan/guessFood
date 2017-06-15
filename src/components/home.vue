@@ -42,8 +42,6 @@
 		},
 		created(){
 			this.foodItems = JSON.parse(JSON.stringify(this.$store.state.foodItems))
-			// var wp = this.utils.getById()
-
 		},
 		computed: {
 			orderItem(){

@@ -82,7 +82,7 @@ export default {
 			return this.$store.state.currentPreiods
 		},
 		userinfo(){
-			return this.$store.state.userInfo
+			return this.$store.state.userinfo
 		}
 	},
 	watch: {
@@ -114,7 +114,7 @@ export default {
 				preiods: this.currentPreiods,
 				options: this.optionsFormat(this.orderItems)
 			})
-			.then((data)=>{
+			.then(({data})=>{
 				this.$store.state.orderItems = []
 				this.$dialog.toast({mes: '下单成功', timeout: 2000})
 			})

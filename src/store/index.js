@@ -1,10 +1,11 @@
 //引入vue及vuex
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
 Vue.use(Vuex)
 const state = {
     domain: "http://192.168.2.108:3000",
-    userInfo: {}, 
+    userinfo: {}, 
     foodItems: [
         {name: "炸鸡", classname: "zj", index: 1,  hot: 9.9, active: false,},
         {name: "米饭", classname: "mf", index: 2,  hot: 9.9, active: false,},
@@ -32,8 +33,8 @@ const state = {
 
 }
 const mutations = {
-    SET_USER_INFO(state, userInfo){
-        state.userInfo = userInfo;
+    SET_USER_INFO(state, userinfo){
+        state.userinfo = userinfo;
     },
     PUSH_ORDER(state, orderItem){
         state.orderItems.unshift(orderItem)
@@ -44,12 +45,12 @@ const mutations = {
     SetPreiods(state, preiods){
         state.currentPreiods = preiods
     },
-    
+    LOGOUT(state){
+        state.orderItems = []
+        state.userinfo = {}
+    }
 }
 const actions = {
-    setUserInfo({commit}, userInfo){
-        commit("SET_USER_INFO", userInfo)
-    },
     pushOrder({commit}, orderItem){
         commit("PUSH_ORDER", orderItem)
     },
@@ -58,12 +59,31 @@ const actions = {
     },
     setPreiods({commit}, preiods){
         commit("SetPreiods", preiods)
-
+    },
+    getUserinfo({commit}, next){
+        axios.get("/api/userinfo")
+        .then(({data})=>{
+            commit("SET_USER_INFO", data.body)
+            next && next()
+        })
+        .catch(e=>{
+            console.log(`ajax:${e}`)
+        })
+    },
+    logout({commit}, next){
+        axios.get('/api/logout')
+        .then(({data})=>{
+            commit("LOGOUT")
+            next && next()
+        })
+        .catch(e=>{
+            console.log(e)
+        })
     }
 }
 // const getters = {
 //   domain: state => state.domain,
-//   userInfo: state => state.userInfo
+//   userinfo: state => state.userinfo
 
 // }
 export default new Vuex.Store({

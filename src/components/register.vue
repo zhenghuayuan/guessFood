@@ -51,11 +51,8 @@
 					email: _this.email
 				})
 				.then(({data})=>{
-					if (data.code == 0) {
-						this.$router.replace({path: "/login"})
-					}else{
-						this.$dialog.toast({mes: data.msg});
-					}
+					this.$router.replace({path: "/login"})
+					
 				})
 				.catch((e)=>{
 					console.log(e)

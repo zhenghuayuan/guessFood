@@ -13,30 +13,34 @@ document.addEventListener('DOMContentLoaded', function() {
 	FastClick.attach(document.body);
 }, false);
 Vue.use(YDUI);
-// AJAX 拦截
+// AJAX 请求拦截
 axios.interceptors.request.use((config)=>{
 	return config
 }, (error)=>{
 	return Promise.reject(error)
 })
+// AJAX 返回拦截 统一错误处理
 axios.interceptors.response.use((response)=>{
-	var code = response['data']['code']
-	if(code == 101 || code == 102){
+	let code = response['data']['code']
+	let msg = response['data']['msg']
+	if (code == 0){
+		return response
+	}else if(code == 101 || code == 102){
 		vm.$router.replace({path: "/login"})
-		// return; 
+	}else{
+		vm.$dialog.toast({mes: msg, timeout: 2000})
 	}
-	return response
 }, (error)=>{
 	return Promise.reject(error);
 });
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
-Vue.prototype.utils = {
-	getById(){
-		alert(1)
-	}
-}
-var vm = new Vue({
+// Vue.prototype.utils = {
+// 	getById(){
+// 		alert(1)
+// 	}
+// }
+const vm = new Vue({
 	el: '#app',
 	router,
 	store,

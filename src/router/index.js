@@ -49,15 +49,13 @@ let router = new Router({
 });
 // 路由拦截
 router.beforeEach((to, from, next)=>{
-    let userid = store.state.userInfo.userid
-    console.log(`userid:${userid}`)
-    if (to.path != '/' &&
-        to.path != '/historyLottery' &&
-        to.path != '/myLotteryRecord') {
-        if (typeof userid == 'undefined') {
-            // router.push({path: "/"})
-            next({path: '/' })
-        }
+    let userid = store.state.userinfo.userid
+    let path = to.path
+    console.log(path)
+    if (!userid 
+        && path != '/login'
+        && path != '/register'){
+        return store.dispatch('getUserinfo', next) 
     }
     next();
 });
