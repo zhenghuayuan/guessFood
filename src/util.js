@@ -30,7 +30,7 @@ export function rand(start, end){
 	return Math.floor(Math.random()*(end-start+1))+start
 }
 export function mapFood(foodItems, options){
-	options = JSON.parse(options || '[]')
+	// options = JSON.parse(options || '[]')
 	var res = foodItems.filter(item=>{
 		var is = false
 		options.forEach(opt=>{

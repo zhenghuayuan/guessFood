@@ -35,7 +35,7 @@
 			<span @click='randActive'>随机一组</span>
 		</div>
 		<transition-group class='content' name='list' tag='div' mode='out-in'>
-			<template v-for='(items, indexs) in orderItems' >
+			<template v-for='(items, indexs) in orderItems'>
 				<div class='order_item' :key='items'>
 					<food 
 						v-for='(item,index) in items' 
@@ -116,7 +116,9 @@ export default {
 			})
 			.then(({data})=>{
 				this.$store.state.orderItems = []
-				this.$dialog.toast({mes: '下单成功', timeout: 2000})
+				this.$store.dispatch('getUserinfo',()=>{
+					this.$dialog.toast({mes: '下单成功', timeout: 2000})
+				})
 			})
 			.catch(function(e){
 				console.log(e)

@@ -7,8 +7,8 @@
 </style>
 <template>
 	<div>
-		<!-- <div class='header'></div> -->
-		<home-header></home-header>
+		<home-header @taggleResultPopou='taggleResultPopou'></home-header>
+		<open-lottery-result v-if='isShowResult' @taggleResultPopou='taggleResultPopou'></open-lottery-result>
 		<div class='content'>
 			<food 
 				v-for='(item, index) in foodItems' 
@@ -31,6 +31,8 @@
 <script>
 	import food from './food'
 	import homeHeader from './home-header'
+	import openLotteryResult from './openlottery-result'
+
 	import {calcuZu, randomNoRepeat} from '../util'
 	export default {
 		name: 'home',
@@ -38,6 +40,7 @@
 			return {
 				foodItems: [],
 				jumpOrderBtnText: '',
+				isShowResult: false,
 			}
 		},
 		created(){
@@ -51,11 +54,12 @@
 		},
 		components: {
 			homeHeader,
-			food
+			food,
+			openLotteryResult
 		},
 		watch: {
 			orderItem(news){
-				let len = news.length;
+				let len = news.length
 				if(news.length >= 3){
 					this.jumpOrderBtnText = len+'道菜，共'+calcuZu(len)+'单，下一步'
 				}else{
@@ -87,7 +91,10 @@
 				this.foodItems.forEach((item)=>{
 					item.active = false;
 				})
-			}	
+			},
+			taggleResultPopou(bool){
+				this.isShowResult = bool
+			}
 		},
 	}
 

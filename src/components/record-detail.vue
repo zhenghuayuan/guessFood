@@ -57,29 +57,9 @@
 		</div>
 	</div>
 </template>
-<style scoped>
-	/*我的记录详情*/
-	.record_result_wrap {padding-bottom: 46px;}
-	.record_result_data {background-color: #28365e;}
-	.record_result_bgc {height: 107px; margin-bottom: 8px; background: url(../images/record_success_bgc.png) no-repeat center; background-size: 100% 100%;}
-	.record_wait_bgc {height: 107px; margin-bottom: 8px; background: url(../images/record_wait_bgc.png) no-repeat center; background-size: 100% 100%;}
-	.record_fail_bgc {height: 107px; margin-bottom: 8px; background: url(../images/record_fail_bgc.png) no-repeat center; background-size: 100% 100%;}
-	.record_result_time {padding: 8px; font-size: 14px; color: #fff; border-bottom: 1px solid #4c7fb5;}
-	.record_result_ul {padding: 5px 0 5px 20px; border-bottom: 1px solid #4c7fb5;}
-	.record_result_ul li {position: relative; overflow: hidden; color: #fff; margin-bottom: 5px;}
-	.record_result_ul > li > * {float: left;}
-	.record_tipls_msg {text-align: center; margin-top: 200px; color: #fff;}
-	
-	.food_wrap {margin-left: 60px; width: 80%;}
-
-	.footer_btn {position: fixed; bottom: 0; width: 100%; word-spacing: 10px; height: 45px; font-weight: bold; background-color: #28365e; border-top: 1px solid #4c7fb5;  text-align: center;}
-	.footer_btn span {display: inline-block; margin-top: 5px; width: 144px; height: 34px; color: #fff; background-color: #ffaa11; line-height: 34px; font-size: 14px; border-radius: 5px;}
-
-</style>
 <script>
 	import food from './food'
 	import {format, mapFood} from '../util'
-
 	export default {
 		data(){
 			return {
@@ -103,7 +83,7 @@
 				return mapFood(this.foodItems, options)
 			},
 			mapHit(food){
-				var lotteryOptions = JSON.parse(this.curRecords.lotteryOptions || '[]')
+				var lotteryOptions = this.curRecords.lotteryOptions
 				return lotteryOptions.some(item =>item == food)
 			},
 			lotteryLogo(status){
@@ -120,6 +100,21 @@
 		components: {
 			food
 		}
-		
 	}
 </script>
+<style scoped>
+	/*我的记录详情*/
+	.record_result_wrap {padding-bottom: 46px;}
+	.record_result_data {background-color: #28365e;}
+	.record_result_bgc {height: 107px; margin-bottom: 8px; background: url(../images/record_success_bgc.png) no-repeat center; background-size: 100% 100%;}
+	.record_wait_bgc {height: 107px; margin-bottom: 8px; background: url(../images/record_wait_bgc.png) no-repeat center; background-size: 100% 100%;}
+	.record_fail_bgc {height: 107px; margin-bottom: 8px; background: url(../images/record_fail_bgc.png) no-repeat center; background-size: 100% 100%;}
+	.record_result_time {padding: 8px; font-size: 14px; color: #fff; border-bottom: 1px solid #4c7fb5;}
+	.record_result_ul {padding: 5px 0 5px 20px; border-bottom: 1px solid #4c7fb5;}
+	.record_result_ul li {position: relative; overflow: hidden; color: #fff; margin-bottom: 5px;}
+	.record_result_ul > li > * {float: left;}
+	.record_tipls_msg {text-align: center; margin-top: 200px; color: #fff;}
+	.food_wrap {margin-left: 60px; width: 80%;}
+	.footer_btn {position: fixed; bottom: 0; width: 100%; word-spacing: 10px; height: 45px; font-weight: bold; background-color: #28365e; border-top: 1px solid #4c7fb5;  text-align: center;}
+	.footer_btn span {display: inline-block; margin-top: 5px; width: 144px; height: 34px; color: #fff; background-color: #ffaa11; line-height: 34px; font-size: 14px; border-radius: 5px;}
+</style>

@@ -23,7 +23,7 @@
 						:name='item.name' 
 						:classname='item.classname' 
 						:index='item.index' 
-						:active = 'item.active'>
+						:active = 'true'>
 					</food>	
 				</div>
 				<div class="luckyuser_info" v-if='history.lotteryUserList.length>0'>

@@ -29,7 +29,10 @@ const state = {
     ],
     orderItems: [], // 订单列表
     PRICE: 200, // 每一组价格
+    lotteryPool: 0, // 奖池
     currentPreiods: '', // 当前期号
+    lastPreiods: '',
+    lastResult: [], // 上一期结果
 
 }
 const mutations = {

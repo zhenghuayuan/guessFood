@@ -10,7 +10,7 @@
 	<div>
 		<div class='home_header'>
 			<em class='jump_userinfo' @click='jumpUserinfo'></em>
-			<span class='lottery_pool'>985246</span>
+			<span class='lottery_pool' @click='openlotteryResult'>{{lotteryPool}}</span>
 		</div>
 		<div class='home_header_info'>
 			<span>开奖：{{targetOpenLottery}} 倒计时：{{countDown}} </span>
@@ -25,15 +25,17 @@
 		data(){
 			return {
 				targetOpenLottery: '00:00', // 开奖时间
-				serverCurrentTime: 0,
-				clientCurrentTime: 0,
+				// serverCurrentTime: 0,
+				// clientCurrentTime: 0,
 				countDown: '00:00',
-				loopOpenlottery: true
+				loopOpenlottery: true, // 控制开奖请求（节流）
+				isOpenPopou: true // 打开开奖结果（节流）
+
 			}
 		},
 		created(){
 			this.guessinfo()
-			this.openlotteryResult()
+			// console.log(this.$parent.$data.foodItems)
 		},
 		computed: {
 			userinfo(){
@@ -41,6 +43,9 @@
 			},
 			currentPreiods(){
 				return this.$store.state.currentPreiods
+			},
+			lotteryPool(){
+				return this.$store.state.lotteryPool
 			}
 		},
 		methods: {
@@ -56,33 +61,61 @@
 						target: body.newestOpenLotteryTime,
 						callback: _this.listenerGame
 					})
-					this.$store.dispatch('setPreiods', body.currentPreiods)
+					// this.$store.dispatch('setPreiods', body.currentPreiods)
+					this.$store.state.currentPreiods = body.currentPreiods
+					this.$store.state.lastPreiods = body.lastPreiods
+					this.$store.state.lastResult = body.lastResult
+					this.$store.state.lotteryPool = body.lotteryPool
 				})
 				.catch(e=>{
 					console.log(e)
 				})
 			},
+			// 倒计时流程控制
 			listenerGame(serverNowMs, countDownMs){
 				// 服务器当前时间：serverNowMs 倒计时剩余时间：countDownMs
 				this.countDown = format(countDownMs, 'mm:ss')
 				let remainMiao = Math.floor(countDownMs/1000)
-				if (remainMiao <= 30) {
-					this.loopOpenlottery && this.openlotteryResult()
+
+				// 
+				if(remainMiao >= 60*30){
+					this.isOpenPopou && this.openResultPopou()
+				}else if (remainMiao >= 0 && remainMiao <= 10) {
+					console.log(`最后倒计时：${remainMiao}`)
+					// this.loopOpenlottery && this.openlotteryResult(this.currentPreiods)
+				}else if(remainMiao < 0) {
+					console.log(`小于0倒计时：${remainMiao}`)
+					this.guessinfo()
 				}
 			},
-			openlotteryResult(){
+			openlotteryResult(preiods){
 				this.loopOpenlottery = false
 				this.axios.get('/api/openlotteryResult', {
 					params: {
-						preiods: this.currentPreiods
+						preiods: preiods
 					}
 				})
 				.then(({data})=>{
+					var body = data.body
+					if (body.length == 0) {
+						this.loopOpenlottery = true
+					}else{
+						setTimeout(()=>{
+							this.loopOpenlottery = true
+						}, 60*1000)
+					}
 					console.log('开奖:'+JSON.stringify(data))
 				})	
 				.catch(e=>{
 					console.log(e)
 				})
+			},
+			openResultPopou(){
+				this.isOpenPopou = false
+				setTimeout(()=>{
+					this.isOpenPopou = true
+				}, 30*1000*60)
+				this.$emit('taggleResultPopou', true)
 			},
 			jumpUserinfo(){
 				this.$router.push({path: 'userinfo'})

@@ -50,7 +50,7 @@
 				timer = setTimeout(()=>{
 					timer = null
 				}, 300)
-				if (pubContainer.scrollTop >= (subContainer.clientHeight - pubContainer.clientHeight) - 20) {
+				if (pubContainer.scrollTop >= (subContainer.clientHeight - pubContainer.clientHeight) - 30) {
 					down()
 				}
 
