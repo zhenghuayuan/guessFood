@@ -7,8 +7,13 @@
 </style>
 <template>
 	<div>
-		<home-header @taggleResultPopou='taggleResultPopou'></home-header>
-		<open-lottery-result v-if='isShowResult' @taggleResultPopou='taggleResultPopou'></open-lottery-result>
+		<home-header 
+			@taggleResultPopou='taggleResultPopou'>
+		</home-header>
+		<open-lottery-result 
+			v-if='isShowResult' 
+			@taggleResultPopou='taggleResultPopou'>
+		</open-lottery-result>
 		<div class='content'>
 			<food 
 				v-for='(item, index) in foodItems' 

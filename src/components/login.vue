@@ -29,7 +29,7 @@
 			// this.$router.push({path: "/"})
 		},
 		methods: {
-			login(){
+			  login(){
 				var _this = this;
 				// console.log(_this.username)
 				// console.log(_this.password)
@@ -46,14 +46,14 @@
 					console.log(e)
 				})
 			}
-		}
+		}   
 	}
 
 function setCookie(name, value, expiredays){
 	var Days = expiredays;
 	var exp = new Date();
 	exp.setTime(exp.getTime() + Days);
-	document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+	document .cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
 }
 function getCookie(name){
     var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
